@@ -94,7 +94,19 @@ class ScriptExecutor
     private function expandSymfonyCmd(string $cmd, array $arguments)
     {
         $repo = $this->composer->getRepositoryManager()->getLocalRepository();
-        if (!$repo->findPackage('symfony/console', class_exists(MatchAllConstraint::class) ? new MatchAllConstraint() : new EmptyConstraint())) {
+        $hasConsole = $repo->findPackage('symfony/console', class_exists(MatchAllConstraint::class) ? new MatchAllConstraint() : new EmptyConstraint());
+        if (!$hasConsole) {
+            // Fallback: check if any installed package replaces symfony/console (e.g. se7enxweb/symfony monolith)
+            foreach ($repo->getPackages() as $package) {
+                foreach ($package->getReplaces() as $link) {
+                    if ('symfony/console' === $link->getTarget()) {
+                        $hasConsole = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+        if (!$hasConsole) {
             $this->io->writeError(\sprintf('<warning>Skipping "%s" (needs symfony/console to run).</>', $cmd));
 
             return null;
