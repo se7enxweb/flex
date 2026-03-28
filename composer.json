@@ -1,7 +1,7 @@
 {
-    "name": "symfony/flex",
+    "name": "se7enxweb/symfony-flex",
     "type": "composer-plugin",
-    "description": "Composer plugin for Symfony",
+    "description": "Composer plugin for Symfony (se7enxweb fork — adds getReplaces() fallback for monolith packages)",
     "license": "MIT",
     "authors": [
         {
@@ -9,6 +9,9 @@
             "email": "fabien.potencier@gmail.com"
         }
     ],
+    "replace": {
+        "symfony/flex": "self.version"
+    },
     "minimum-stability": "dev",
     "require": {
         "php": ">=8.1",
