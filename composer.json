@@ -10,7 +10,7 @@
         }
     ],
     "replace": {
-        "symfony/flex": "self.version"
+        "symfony/flex": "*"
     },
     "minimum-stability": "dev",
     "require": {
