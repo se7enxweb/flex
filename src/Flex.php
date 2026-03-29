@@ -133,8 +133,8 @@ class Flex implements PluginInterface, EventSubscriberInterface
 
         $disable = true;
         foreach (array_merge($composer->getPackage()->getRequires() ?? [], $composer->getPackage()->getDevRequires() ?? []) as $link) {
-            // recipes apply only when symfony/flex is found in "require" or "require-dev" in the root package
-            if ('symfony/flex' === $link->getTarget()) {
+            // recipes apply only when symfony/flex (or its fork se7enxweb/symfony-flex) is found in "require" or "require-dev" in the root package
+            if ('symfony/flex' === $link->getTarget() || 'se7enxweb/symfony-flex' === $link->getTarget()) {
                 $disable = false;
                 break;
             }
@@ -265,7 +265,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
 
     public function recordFlexInstall(PackageEvent $event)
     {
-        if (null === $this->reinstall && 'symfony/flex' === $event->getOperation()->getPackage()->getName()) {
+        if (null === $this->reinstall && \in_array($event->getOperation()->getPackage()->getName(), ['symfony/flex', 'se7enxweb/symfony-flex'], true)) {
             $this->reinstall = true;
         }
     }

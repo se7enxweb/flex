@@ -94,9 +94,19 @@ class ScriptExecutor
     {
         $repo = $this->composer->getRepositoryManager()->getLocalRepository();
         if (!$repo->findPackage('symfony/console', new MatchAllConstraint())) {
-            $this->io->writeError(\sprintf('<warning>Skipping "%s" (needs symfony/console to run).</>', $cmd));
+            // Also accept packages that replace symfony/console (e.g. se7enxweb/symfony monolith)
+            $hasConsole = false;
+            foreach ($repo->getPackages() as $pkg) {
+                if (isset($pkg->getReplaces()['symfony/console'])) {
+                    $hasConsole = true;
+                    break;
+                }
+            }
+            if (!$hasConsole) {
+                $this->io->writeError(\sprintf('<warning>Skipping "%s" (needs symfony/console to run).</>', $cmd));
 
-            return null;
+                return null;
+            }
         }
 
         $console = ProcessExecutor::escape($this->options->get('root-dir').'/'.$this->options->get('bin-dir').'/console');
